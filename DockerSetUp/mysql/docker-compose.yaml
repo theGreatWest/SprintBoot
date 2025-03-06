@@ -1,0 +1,28 @@
+#version: "3" # docker-compose 에 사용되는 언어는 3 버전이다.
+#version: "3.8" # docker-compose 에 사용되는 언어는 3 버전이다.
+
+services:
+  db:
+#    image: mysql:8.0.26
+    image: mysql:8.0.33  # 최신 버전 중 ARM64 지원 확인된 버전: mysql:8.0.33 → ARM64 지원이 확인된 MySQL 버전입니다.
+    platform: linux/amd64 # ARM 환경에서 x86_64 아키텍처 이미지를 실행하도록 설정: 기본적으로 mysql 공식 이미지는 ARM 아키텍처를 지원하지 않는 경우가 많으므로, ARM을 지원하는 이미지를 직접 지정해야 합니다.
+  # platform: linux/amd64 → ARM 환경에서도 실행될 수 있도록 amd64 아키텍처의 컨테이너를 실행하도록 지정합니다.
+
+    restart: always
+    command:
+      - --lower_case_table_names=1
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    container_name: mysql
+    ports:
+      - "3307:3306" # mysql workbench에 적을 port 번호(내 PC 에서 사용할 포트):컨테이너연결포트
+
+#    network_mode: "host"
+    environment:
+      - MYSQL_DATABASE=mydb # mysql 데이터베이스 이름
+      - MYSQL_ROOT_PASSWORD=root1234!! # root 데이터베이스 비번
+      - TZ=Asia/Seoul # 데이터 베이스 시간 설정
+    volumes: # 어디에 저장할 건지 지정
+#      - C:\Temp\MYSQL:/var/lib/mysql
+      - /usr/youngjukim/Desktop/Backend_Path:/var/lib/mysql
